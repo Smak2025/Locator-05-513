@@ -80,7 +80,9 @@ class MainActivity : ComponentActivity() {
                                     modifier = Modifier.padding(8.dp))
                             }
                         }*/
-                        MapScreen()
+                        MapScreen(
+                            currentLocation = vm.locations.lastOrNull()
+                        )
                     }
                 }
             }
@@ -107,6 +109,7 @@ class MainActivity : ComponentActivity() {
     fun startLocating(){
         Locator.addLocationListener { location ->
             vm.locations.add(location)
+            println("Location Added $location")
         }
         if (ActivityCompat.checkSelfPermission(
                 this,
@@ -153,6 +156,8 @@ fun MapScreen(
     modifier: Modifier = Modifier,
     currentLocation: Location? = null,
 ){
+    println("Updating Map Screen $currentLocation")
+
     var currentPoint by remember { mutableStateOf<Point?>(null) }
     var yandexMap by remember { mutableStateOf<com.yandex.mapkit.map.Map?>(null) }
     var locationCircle by remember { mutableStateOf<Circle?>(null) }
@@ -165,7 +170,14 @@ fun MapScreen(
         MapView(context).also{ view ->
             view.mapWindow.map
         }
-    }, update ={
+    }, update = { mapView ->
+        val map = yandexMap
+        println("Updating Map $currentLocation")
+        currentPoint?.let { center ->
+            mapView.mapWindow.map.mapObjects.addCircle(
+                Circle(center, 12f)
+            )
+        }
 
     })
 }
