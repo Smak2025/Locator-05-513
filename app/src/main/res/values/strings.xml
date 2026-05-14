@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">Locator</string>
+    <string name="access_granted">предоставлен 😊</string>
+    <string name="access_restricted">отклонен 😒</string>
+    <string name="access">Доступ %1$s</string>
+</resources>
