@@ -32,7 +32,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.app.ActivityCompat
 import com.yandex.mapkit.MapKitFactory
 import com.yandex.mapkit.geometry.Circle
+import com.yandex.mapkit.geometry.Geometry
 import com.yandex.mapkit.geometry.Point
+import com.yandex.mapkit.geometry.Polyline
 import com.yandex.mapkit.mapview.MapView
 import edu.gr05513.locator.locating.Locator
 import edu.gr05513.locator.ui.theme.LocatorTheme
@@ -153,6 +155,7 @@ fun ShowLocationAccessStatusPreview() {
 
 @Composable
 fun MapScreen(
+    locations: List<Location>,
     modifier: Modifier = Modifier,
     currentLocation: Location? = null,
 ){
@@ -174,9 +177,18 @@ fun MapScreen(
         val map = yandexMap
         println("Updating Map $currentLocation")
         currentPoint?.let { center ->
+            val circle = Circle(center, 12f)
+            val position = Circle(center, 100f)
             mapView.mapWindow.map.mapObjects.addCircle(
-                Circle(center, 12f)
+                circle
             )
+            val g = Geometry.fromCircle(position)
+            val path = Polyline(locations.map {
+                Point(it.latitude, it.longitude)
+            })
+            mapView.mapWindow.map.cameraPosition(g).let {
+                mapView.mapWindow.map.move(it)
+            }
         }
 
     })
