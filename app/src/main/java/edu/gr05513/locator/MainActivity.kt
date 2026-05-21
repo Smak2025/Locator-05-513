@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -83,6 +81,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }*/
                         MapScreen(
+                            locations = vm.locations,
                             currentLocation = vm.locations.lastOrNull()
                         )
                     }
@@ -177,16 +176,18 @@ fun MapScreen(
         val map = yandexMap
         println("Updating Map $currentLocation")
         currentPoint?.let { center ->
-            val circle = Circle(center, 12f)
+            val circle = Circle(center, 5f)
             val position = Circle(center, 100f)
             mapView.mapWindow.map.mapObjects.addCircle(
                 circle
             )
-            val g = Geometry.fromCircle(position)
             val path = Polyline(locations.map {
                 Point(it.latitude, it.longitude)
             })
-            mapView.mapWindow.map.cameraPosition(g).let {
+            mapView.mapWindow.map.mapObjects.addPolyline(path)
+            val g1 = Geometry.fromPolyline(path)
+            val g2 = Geometry.fromCircle(position)
+            mapView.mapWindow.map.cameraPosition(g1).let {
                 mapView.mapWindow.map.move(it)
             }
         }
